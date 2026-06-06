@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeHack Hub — Hackroms Pokémon</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E3350D;
+    --red-dark: #B02A0A;
+    --red-light: #FF6B47;
+    --yellow: #FFCB05;
+    --yellow-dark: #C8A000;
+    --blue: #3B4CCA;
+    --blue-dark: #1A237E;
+    --blue-light: #6B7FE8;
+    --dark: #1A1A2E;
+    --darker: #0D0D1A;
+    --card-bg: #16213E;
+    --card-border: #0F3460;
+    --text: #F0F0F0;
+    --text-muted: #9BA3C5;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --surface: #0F3460;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--darker);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Pixel grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,76,202,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,76,202,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,13,26,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--red);
+    padding: 0 2rem;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-ball {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--red) 50%, white 50%);
+    border: 3px solid #333;
+    position: relative;
+    flex-shrink: 0;
+    animation: spin-idle 6s ease-in-out infinite;
+  }
+  .logo-ball::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #333;
+  }
+
+  @keyframes spin-idle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-15deg); }
+    75% { transform: rotate(15deg); }
+  }
+
+  .logo-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    line-height: 1.4;
+    text-shadow: 2px 2px 0 var(--red-dark);
+  }
+  .logo-text span { color: white; }
+
+  nav { display: flex; gap: 4px; align-items: center; }
+
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover, nav a.active {
+    color: var(--yellow);
+    background: rgba(255,203,5,0.1);
+  }
+
+  .btn-upload-header {
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-upload-header:hover { background: var(--red-dark); transform: translateY(-1px); }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(227,53,13,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 30% 80%, rgba(59,76,202,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(18px, 4vw, 36px);
+    color: var(--yellow);
+    text-shadow: 3px 3px 0 var(--red-dark), 5px 5px 0 rgba(0,0,0,0.5);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(227,53,13,0.4); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 16px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: 2px solid var(--card-border);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { border-color: var(--blue-light); color: var(--blue-light); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    margin-top: 3.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+  .stat-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 20px;
+    color: var(--yellow);
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* ===== SECTION TITLES ===== */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 3rem 0 1.5rem;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--red);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .see-all {
+    color: var(--blue-light);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .see-all:hover { color: var(--yellow); }
+
+  /* ===== FILTER BAR ===== */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .filter-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+  .filter-btn.active { background: var(--red); border-color: var(--red); color: white; }
+
+  .search-box {
+    margin-left: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box input {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px 8px 40px;
+    border-radius: 20px;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--blue-light); }
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* ===== HACK CARDS ===== */
+  .hacks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .hack-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.25s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+  }
+  .hack-card:hover {
+    border-color: var(--red);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(227,53,13,0.3);
+  }
+
+  .hack-cover {
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hack-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hack-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+  }
+
+  .hack-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .hack-badge.completed { background: var(--success); }
+  .hack-badge.beta { background: var(--warning); color: #111; }
+  .hack-badge.demo { background: var(--blue); }
+
+  .hack-base-tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    color: var(--yellow);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+  }
+
+  .hack-body {
+    padding: 1rem 1.25rem;
+  }
+
+  .hack-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .hack-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hack-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .hack-author {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .author-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .hack-stats {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .hack-stat {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .type-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .type-tag {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Pokémon type colors */
+  .t-fire { background: rgba(255,68,0,0.2); color: #FF6B35; border: 1px solid rgba(255,68,0,0.3); }
+  .t-water { background: rgba(59,76,202,0.2); color: #6B7FE8; border: 1px solid rgba(59,76,202,0.3); }
+  .t-grass { background: rgba(76,175,80,0.2); color: #81C784; border: 1px solid rgba(76,175,80,0.3); }
+  .t-electric { background: rgba(255,203,5,0.2); color: #FFD740; border: 1px solid rgba(255,203,5,0.3); }
+  .t-psychic { background: rgba(233,30,99,0.2); color: #F06292; border: 1px solid rgba(233,30,99,0.3); }
+  .t-dark { background: rgba(80,60,40,0.4); color: #BCAAA4; border: 1px solid rgba(120,90,60,0.3); }
+  .t-dragon { background: rgba(100,50,200,0.2); color: #B39DDB; border: 1px solid rgba(100,50,200,0.3); }
+  .t-normal { background: rgba(150,150,150,0.2); color: #BDBDBD; border: 1px solid rgba(150,150,150,0.3); }
+  .t-fighting { background: rgba(180,60,20,0.2); color: #E57373; border: 1px solid rgba(180,60,20,0.3); }
+  .t-ghost { background: rgba(80,50,120,0.3); color: #CE93D8; border: 1px solid rgba(80,50,120,0.3); }
+  .t-fairy { background: rgba(255,100,180,0.2); color: #F48FB1; border: 1px solid rgba(255,100,180,0.3); }
+
+  /* ===== FEATURED CARD ===== */
+  .featured-card {
+    background: linear-gradient(135deg, var(--card-bg) 0%, #1a1a3e 100%);
+    border: 1px solid var(--red);
+    border-radius: 20px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .featured-card::before {
+    content: '★ DESTACADO';
+    position: absolute;
+    top: 16px;
+    right: -30px;
+    background: var(--yellow);
+    color: #111;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
+
+  .featured-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--yellow);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .featured-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-sprite {
+    font-size: 80px;
+    text-align: center;
+    filter: drop-shadow(0 0 20px rgba(255,203,5,0.4));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* ===== UPLOAD MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+    animation: modal-in 0.3s ease;
+  }
+
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.2); }
+
+  .modal-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: var(--yellow);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .form-control {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-control:focus { border-color: var(--blue-light); }
+  .form-control::placeholder { color: var(--text-muted); }
+
+  textarea.form-control { resize: vertical; min-height: 90px; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* File drop zone */
+  .drop-zone {
+    border: 2px dashed var(--card-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(15,52,96,0.3);
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--red);
+    background: rgba(227,53,13,0.08);
+  }
+
+  .drop-zone-icon { font-size: 36px; margin-bottom: 10px; }
+  .drop-zone-text { color: var(--text-muted); font-size: 14px; font-weight: 600; }
+  .drop-zone-text strong { color: var(--red); }
+  .drop-zone-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+  .drop-zone input[type="file"] {
+    display: none;
+  }
+
+  .file-selected {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--success);
+  }
+  .file-selected.show { display: flex; }
+
+  .type-select-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .type-select-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .type-select-btn.selected { background: var(--red); border-color: var(--red); color: white; }
+  .type-select-btn:hover:not(.selected) { border-color: var(--text-muted); color: var(--text); }
+
+  .progress-bar-wrap {
+    display: none;
+    margin-top: 1rem;
+  }
+  .progress-bar-wrap.show { display: block; }
+  .progress-bar-track {
+    background: var(--surface);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+    border-radius: 20px;
+    width: 0;
+    transition: width 0.1s;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  /* ===== DETAIL PAGE ===== */
+  .detail-page {
+    display: none;
+  }
+  .detail-page.active { display: block; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px 0;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--yellow); }
+
+  .detail-header {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-cover {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-info {
+    padding: 1.5rem 2rem;
+  }
+
+  .detail-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--yellow);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .detail-meta-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .detail-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .detail-section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--text);
+    margin: 1.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .download-btn {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .download-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(227,53,13,0.5); }
+
+  .screenshot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .screenshot {
+    background: var(--surface);
+    border-radius: 8px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 1px solid var(--card-border);
+  }
+
+  /* ===== TOAST ===== */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 280px;
+    animation: toast-in 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .toast.success { border-color: rgba(76,175,80,0.5); }
+  .toast.error { border-color: rgba(227,53,13,0.5); }
+
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===== RATING STARS ===== */
+  .stars {
+    display: flex;
+    gap: 2px;
+  }
+  .star {
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    color: var(--card-border);
+  }
+  .star.filled { color: var(--yellow); }
+  .star:hover { transform: scale(1.2); }
+
+  /* ===== COMMENTS ===== */
+  .comment {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+  }
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .comment-author { font-weight: 800; font-size: 14px; }
+  .comment-date { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+  .comment-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: var(--darker);
+    border-top: 1px solid var(--card-border);
+    padding: 3rem 2rem 2rem;
+    margin-top: 4rem;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .footer-brand p {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+
+  .footer-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 8px; }
+  .footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--yellow); }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .disclaimer {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .header-inner { padding: 0; }
+    nav { display: none; }
+    .featured-card { grid-template-columns: 1fr; }
+    .featured-sprite { font-size: 60px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: clamp(14px, 5vw, 22px); }
+    .type-select-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 480px) {
+    .footer-inner { grid-template-columns: 1fr; }
+    .hacks-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== PARTICLES / DECORATIVE ===== */
+  .pokeball-deco {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.04;
+  }
+  .pokeball-deco-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--red) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+  }
+  .pokeball-deco-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--blue) 0%, transparent 70%);
+    bottom: 200px;
+    left: -80px;
+  }
+
+  /* ===== VIEW PAGES ===== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--darker); }
+  ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="pokeball-deco pokeball-deco-1"></div>
+<div class="pokeball-deco pokeball-deco-2"></div>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="showPage('home'); return false;">
+      <div class="logo-ball"></div>
+      <div class="logo-text">
+        POKEHACK<br>
+        <span>HUB</span>
+      </div>
+    </a>
+    <nav>
+      <a href="#" class="active" onclick="showPage('home'); return false;">Inicio</a>
+      <a href="#" onclick="showPage('explore'); return false;">Explorar</a>
+      <a href="#" onclick="showPage('ranking'); return false;">Ranking</a>
+      <a href="#">Guías</a>
+      <a href="#">Foro</a>
+    </nav>
+    <button class="btn-upload-header" onclick="openUpload()">
+      ⬆ Subir Hackrom
+    </button>
+  </div>
+</header>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <h1>La Casa de los<br>Hackroms Pokémon</h1>
+    <p>Descarga, comparte y descubre los mejores hackroms de la comunidad. Más de 500 proyectos esperan por ti.</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="showPage('explore')">
+        🎮 Explorar Hackroms
+      </button>
+      <button class="btn-secondary" onclick="openUpload()">
+        ⬆ Subir mi Hackrom
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-number" id="stat-hacks">523</div>
+        <div class="stat-label">Hackroms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-dl">48K</div>
+        <div class="stat-label">Descargas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">8.4K</div>
+        <div class="stat-label">Usuarios</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">127</div>
+        <div class="stat-label">Autores</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+
+    <!-- FEATURED -->
+    <div class="featured-card">
+      <div>
+        <div class="section-title" style="margin-bottom:1rem; font-size:10px;">✨ HACKROM DEL MES</div>
+        <div class="featured-title">POKÉMON GLAZED</div>
+        <div class="featured-desc">Embárcate en un épico viaje por tres regiones con más de 40 horas de contenido, nuevas rutas, Pokémon de todas las generaciones y una historia completamente original.</div>
+        <div class="type-tags">
+          <span class="type-tag t-fire">GBA</span>
+          <span class="type-tag t-grass">Completo</span>
+          <span class="type-tag t-dragon">Aventura</span>
+          <span class="type-tag t-psychic">Multi-región</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <button class="download-btn" style="padding:10px 24px; font-size:13px;" onclick="openDetail('glazed')">
+            📥 Ver Detalles
+          </button>
+          <div class="stars" style="margin-left: 4px;">
+            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+          </div>
+          <span style="font-size:13px; color:var(--text-muted); font-weight:700;">4.9 (312 reseñas)</span>
+        </div>
+      </div>
+      <div class="featured-sprite">🌟</div>
+    </div>
+
+    <!-- RECENT -->
+    <div class="section-header">
+      <div class="section-title">Recién Añadidos</div>
+      <a href="#" class="see-all" onclick="showPage('explore'); return false;">Ver todos →</a>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterHacks(this, 'all')">Todos</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'gba')">GBA</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'nds')">NDS</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'gbc')">GBC</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'completed')">Completos</button>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscar hackrom..." id="search-input" oninput="searchHacks(this.value)">
+      </div>
+    </div>
+
+    <div class="hacks-grid" id="hacks-grid">
+      <!-- Cards generated by JS -->
+    </div>
+
+    <!-- TOP AUTHORS -->
+    <div class="section-header" style="margin-top:3.5rem;">
+      <div class="section-title">Top Autores</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px;" id="authors-grid">
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== EXPLORE PAGE ===== -->
+<div id="page-explore" class="page">
+  <div class="main" style="padding-top:2rem;">
+    <div class="section-header">
+      <div class="section-title">Explorar Hackroms</div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterHacks(this, 'all')">Todos</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'gba')">GBA</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'nds')">NDS</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'gbc')">GBC</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'completed')">Completos</button>
+      <button class="filter-btn" onclick="filterHacks(this, 'beta')">Beta</button>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscar hackrom..." oninput="searchHacks(this.value)">
+      </div>
+    </div>
+    <div class="hacks-grid" id="hacks-grid-explore"></div>
+  </div>
+</div>
+
+<!-- ===== RANKING PAGE ===== -->
+<div id="page-ranking" class="page">
+  <div class="main" style="padding-top:2rem;">
+    <div class="section-header">
+      <div class="section-title">🏆 Ranking de Hackroms</div>
+    </div>
+    <div id="ranking-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+  </div>
+</div>
+
+<!-- ===== DETAIL PAGE ===== -->
+<div id="page-detail" class="page">
+  <div class="main" style="padding-top:2rem;">
+    <button class="back-btn" onclick="goBack()">← Volver atrás</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- ===== UPLOAD MODAL ===== -->
+<div class="modal-overlay" id="upload-modal" onclick="closeUploadOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeUpload()">✕</button>
+    <div class="modal-title">📤 Subir Hackrom</div>
+
+    <div class="form-group">
+      <label>Nombre del Hackrom *</label>
+      <input type="text" class="form-control" id="f-name" placeholder="ej. Pokémon Glazed Remastered">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>ROM base *</label>
+        <select class="form-control" id="f-base">
+          <option value="">Seleccionar...</option>
+          <option>FireRed (GBA)</option>
+          <option>Emerald (GBA)</option>
+          <option>Ruby (GBA)</option>
+          <option>Gold (GBC)</option>
+          <option>Crystal (GBC)</option>
+          <option>Black (NDS)</option>
+          <option>HeartGold (NDS)</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Estado *</label>
+        <select class="form-control" id="f-status">
+          <option value="">Seleccionar...</option>
+          <option value="completed">Completado</option>
+          <option value="beta">Beta</option>
+          <option value="demo">Demo</option>
+          <option value="en progreso">En Progreso</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción *</label>
+      <textarea class="form-control" id="f-desc" placeholder="Describe tu hackrom: historia, características, pokémon disponibles..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Características / Tags</label>
+      <div class="type-select-grid" id="type-select">
+        <div class="type-select-btn" onclick="toggleType(this)">Nuevas Rutas</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Fairy Type</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Mega Evolución</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Multi-región</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Historia Original</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Dificultad Alta</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Gen 4-9 Pokémon</div>
+        <div class="type-select-btn" onclick="toggleType(this)">Español</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Archivo del Hackrom *</label>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('f-file').click()"
+        ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <input type="file" id="f-file" accept=".gba,.nds,.gbc,.gb,.ips,.ups,.zip,.7z" onchange="handleFileSelect(event)">
+        <div class="drop-zone-icon">📁</div>
+        <div class="drop-zone-text">Arrastra tu archivo o <strong>haz clic aquí</strong></div>
+        <div class="drop-zone-hint">.gba .nds .gbc .gb .ips .ups .zip .7z — Máx 64MB</div>
+      </div>
+      <div class="file-selected" id="file-selected">
+        ✅ <span id="file-name-display"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Imagen de portada (opcional)</label>
+      <div class="drop-zone" style="padding:1rem;" onclick="document.getElementById('f-img').click()">
+        <input type="file" id="f-img" accept="image/*" onchange="handleImgSelect(event)">
+        <div style="font-size:14px; color:var(--text-muted); font-weight:600;">🖼️ Seleccionar imagen (.png, .jpg)</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Enlace externo (opcional)</label>
+      <input type="url" class="form-control" id="f-url" placeholder="https://gbatemp.net/...">
+    </div>
+
+    <div class="progress-bar-wrap" id="progress-wrap">
+      <div class="progress-label" id="progress-label">Subiendo... 0%</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:1.5rem;">
+      <button class="btn-primary" style="flex:1; justify-content:center;" onclick="submitHack()">
+        🚀 Publicar Hackrom
+      </button>
+      <button class="btn-secondary" onclick="closeUpload()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="logo-ball" style="width:28px; height:28px;"></div>
+        <div class="logo-text" style="font-size:9px;">POKEHACK HUB</div>
+      </div>
+      <p>El repositorio comunitario más completo de hackroms Pokémon. Preservando y compartiendo el trabajo de la comunidad desde 2024.</p>
+      <p class="disclaimer" style="margin-top:10px;">Este sitio no está afiliado con Nintendo ni Game Freak. Los hackroms son proyectos de fans y se comparten con fines educativos y de entretenimiento.</p>
+    </div>
+    <div>
+      <div class="footer-title">Explorar</div>
+      <ul class="footer-links">
+        <li><a href="#">Hackroms GBA</a></li>
+        <li><a href="#">Hackroms NDS</a></li>
+        <li><a href="#">Hackroms GBC</a></li>
+        <li><a href="#">Completados</a></li>
+        <li><a href="#">Betas</a></li>
+        <li><a href="#">Más descargados</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Comunidad</div>
+      <ul class="footer-links">
+        <li><a href="#">Foro</a></li>
+        <li><a href="#">Discord</a></li>
+        <li><a href="#">Guías de ROM Hacking</a></li>
+        <li><a href="#">Herramientas</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Info</div>
+      <ul class="footer-links">
+        <li><a href="#">Acerca de</a></li>
+        <li><a href="#">Reglas</a></li>
+        <li><a href="#">DMCA</a></li>
+        <li><a href="#">Contacto</a></li>
+        <li><a href="#">Subir Hackrom</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 PokeHack Hub — Hecho con ❤️ por la comunidad</div>
+    <div>v2.0 · Todos los derechos de Pokémon son de Nintendo/Game Freak</div>
+  </div>
+</footer>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ===== DATA =====
+const HACKS_DATA = [
+  {
+    id: 'glazed',
+    title: 'Pokémon Glazed',
+    desc: 'Un hackrom épico de FireRed con 3 regiones completamente nuevas, 40h+ de historia y Pokémon de todas las generaciones.',
+    base: 'FireRed (GBA)',
+    platform: 'gba',
+    status: 'completed',
+    author: 'TrainerX',
+    authorInitial: 'TX',
+    downloads: 12840,
+    rating: 4.9,
+    reviews: 312,
+    emoji: '🌟',
+    image: 'images/glazed.svg',
+    downloadUrl: 'https://gbatemp.net/threads/pokemon-glazed.345999/',
+    gradient: 'linear-gradient(135deg, #1a237e 0%, #283593 100%)',
+    tags: ['Aventura', 'Multi-región', 'Gen 4-9'],
+    date: '2024-11-15',
+    features: ['3 regiones originales', '40+ horas de contenido', 'Pokémon gen 1-9', 'Mega evoluciones', 'Español disponible'],
+    screenshots: ['🌄','🏙️','⚔️','🌊']
+  },
+  {
+    id: 'unbound',
+    title: 'Pokémon Unbound',
+    desc: 'Hackrom de FireRed con dificultad elevada, misiones secundarias, sistema de puntos de habilidad y una historia oscura.',
+    base: 'FireRed (GBA)',
+    platform: 'gba',
+    status: 'completed',
+    author: 'Skeli789',
+    authorInitial: 'SK',
+    downloads: 9320,
+    rating: 4.8,
+    reviews: 241,
+    emoji: '🔥',
+    image: 'images/unbound.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=382178',
+    gradient: 'linear-gradient(135deg, #7f0000 0%, #c62828 100%)',
+    tags: ['Alta dificultad', 'Misiones', 'Historia dark'],
+    date: '2024-10-28',
+    features: ['Sistema de misiones', 'Dificultad configurable', 'Mundo abierto', 'Historia madura', '5 modos de juego'],
+    screenshots: ['🌑','🗺️','💀','🎯']
+  },
+  {
+    id: 'radical-red',
+    title: 'Radical Red',
+    desc: 'El hackrom de dificultad más conocido de la comunidad. IA mejorada, todos los Pokémon, abilities modernas.',
+    base: 'FireRed (GBA)',
+    platform: 'gba',
+    status: 'completed',
+    author: 'Koala4',
+    authorInitial: 'K4',
+    downloads: 21500,
+    rating: 4.7,
+    reviews: 589,
+    emoji: '💥',
+    image: 'images/radical-red.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=416294',
+    gradient: 'linear-gradient(135deg, #880000 0%, #aa0000 100%)',
+    tags: ['Dificultad máxima', 'Competitive', 'Todas las gens'],
+    date: '2024-12-01',
+    features: ['IA del rival mejorada', 'Todas las habilidades modernas', 'Items modernos', 'Boss fights épicos'],
+    screenshots: ['⚡','🏆','💪','🎮']
+  },
+  {
+    id: 'crystal-legacy',
+    title: 'Pokémon Crystal Legacy',
+    desc: 'Una revisión profunda de Crystal con balanceo completo, nuevos tipos y una dificultad desafiante pero justa.',
+    base: 'Crystal (GBC)',
+    platform: 'gbc',
+    status: 'completed',
+    author: 'CrystalDev',
+    authorInitial: 'CD',
+    downloads: 5640,
+    rating: 4.6,
+    reviews: 128,
+    emoji: '💎',
+    image: 'images/crystal-legacy.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=449271',
+    gradient: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
+    tags: ['GBC', 'Balanceado', 'Fairy Type'],
+    date: '2024-09-20',
+    features: ['Tipo Hada añadido', 'Movimiento físico/especial', 'QoL moderno', 'Johto revisado'],
+    screenshots: ['🌙','🏔️','🌸','✨']
+  },
+  {
+    id: 'renegade-platinum',
+    title: 'Renegade Platinum',
+    desc: 'Hace que Pokémon Platinum sea la experiencia NDS definitiva. Dificultad alta, todos los Pokémon y muchísimo QoL.',
+    base: 'Platinum (NDS)',
+    platform: 'nds',
+    status: 'completed',
+    author: 'Drayano60',
+    authorInitial: 'DR',
+    downloads: 8900,
+    rating: 4.8,
+    reviews: 302,
+    emoji: '⚙️',
+    image: 'images/renegade-platinum.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=438542',
+    gradient: 'linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%)',
+    tags: ['NDS', 'QoL', 'Alta dificultad'],
+    date: '2024-08-15',
+    features: ['Todos los 493 Pokémon', 'Todos los tipos modernos', 'Dificultad alta', 'Sin grinding necesario'],
+    screenshots: ['❄️','🌿','🗻','⚡']
+  },
+  {
+    id: 'dark-cry',
+    title: 'Dark Cry: The Legend of Giratina',
+    desc: 'Aventura oscura en beta con Giratina como protagonista, región original y mecánicas únicas de la sombra.',
+    base: 'Platinum (NDS)',
+    platform: 'nds',
+    status: 'beta',
+    author: 'ShadowDev',
+    authorInitial: 'SD',
+    downloads: 2100,
+    rating: 3.9,
+    reviews: 67,
+    emoji: '👻',
+    image: 'images/dark-cry.svg',
+    downloadUrl: 'https://gbatemp.net/threads/dark-cry-the-legend-of-giratina.218487/',
+    gradient: 'linear-gradient(135deg, #212121 0%, #424242 100%)',
+    tags: ['Historia dark', 'Beta', 'Región original'],
+    date: '2024-12-10',
+    features: ['Región nueva: Cyren', 'Mecánicas de sombra', 'Historia de Giratina', 'Nuevas fusiones'],
+    screenshots: ['🌑','👁️','🌀','💜']
+  },
+  {
+    id: 'theta-emerald',
+    title: 'Theta Emerald EX',
+    desc: 'Hackrom de Emerald que añade todas las 721 Megas de la generación hasta X/Y con efectos visuales increíbles.',
+    base: 'Emerald (GBA)',
+    platform: 'gba',
+    status: 'completed',
+    author: 'LCCoolJ05',
+    authorInitial: 'LC',
+    downloads: 7200,
+    rating: 4.5,
+    reviews: 198,
+    emoji: '🌀',
+    image: 'images/theta-emerald.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=390312',
+    gradient: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
+    tags: ['Megas', 'GBA', 'Todas las gens'],
+    date: '2024-07-30',
+    features: ['721 Pokémon disponibles', 'Todos los megas hasta ORAS', 'Nuevos movimientos', 'Sprites actualizados'],
+    screenshots: ['🌿','✨','🔮','🌟']
+  },
+  {
+    id: 'orange-islands',
+    title: 'Pokémon Orange Islands',
+    desc: 'Demo jugable del animé. Explora las Islas Naranja como Ash con Pikachu, eventos del anime y más.',
+    base: 'FireRed (GBA)',
+    platform: 'gba',
+    status: 'demo',
+    author: 'AnimeHacker',
+    authorInitial: 'AH',
+    downloads: 3400,
+    rating: 4.2,
+    reviews: 85,
+    emoji: '🌴',
+    image: 'images/orange-islands.svg',
+    downloadUrl: 'https://www.pokecommunity.com/showthread.php?t=252213',
+    gradient: 'linear-gradient(135deg, #e65100 0%, #f57c00 100%)',
+    tags: ['Animé', 'Demo', 'Islas Naranja'],
+    date: '2024-11-28',
+    features: ['Basado en el animé', 'Islas originales', 'Eventos de la serie', 'Pikachu sin Poké Ball'],
+    screenshots: ['🌴','🏖️','🌊','⛵']
+  }
+];
+
+const AUTHORS = [
+  { name: 'TrainerX', hacks: 5, downloads: 28400, initial: 'TX', color: '#E3350D' },
+  { name: 'Skeli789', hacks: 3, downloads: 19200, initial: 'SK', color: '#3B4CCA' },
+  { name: 'Drayano60', hacks: 8, downloads: 52000, initial: 'DR', color: '#FFCB05', textColor: '#111' },
+  { name: 'Koala4', hacks: 2, downloads: 31000, initial: 'K4', color: '#4CAF50' },
+];
+
+// ===== STATE =====
+let currentFilter = 'all';
+let currentPage = 'home';
+let previousPage = 'home';
+let selectedFile = null;
+let selectedImg = null;
+let userHacks = JSON.parse(localStorage.getItem('phh_hacks') || '[]');
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  renderHacks('hacks-grid', HACKS_DATA.slice(0, 6));
+  renderHacks('hacks-grid-explore', getAllHacks());
+  renderAuthors();
+  renderRanking();
+  updateStats();
+});
+
+function getAllHacks() {
+  return [...HACKS_DATA, ...userHacks];
+}
+
+function updateStats() {
+  const total = HACKS_DATA.length + userHacks.length;
+  document.getElementById('stat-hacks').textContent = total > 523 ? total : '523';
+}
+
+// ===== PAGE NAVIGATION =====
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+
+  previousPage = currentPage;
+  currentPage = page;
+
+  if (page === 'explore') {
+    renderHacks('hacks-grid-explore', getAllHacks());
+    document.querySelectorAll('nav a')[1].classList.add('active');
+  } else if (page === 'ranking') {
+    renderRanking();
+    document.querySelectorAll('nav a')[2].classList.add('active');
+  } else if (page === 'home') {
+    document.querySelectorAll('nav a')[0].classList.add('active');
+    renderHacks('hacks-grid', getAllHacks().slice(0, 6));
+    renderAuthors();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  showPage(previousPage === 'detail' ? 'home' : previousPage);
+}
+
+// ===== RENDER HACKS =====
+function renderHacks(gridId, hacks) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  if (!hacks.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted);">No se encontraron hackroms 😔</div>';
+    return;
+  }
+  grid.innerHTML = hacks.map(h => hackCardHTML(h)).join('');
+}
+
+function hackCardHTML(h) {
+  const badgeClass = h.status === 'completed' ? 'completed' : h.status === 'beta' ? 'beta' : 'demo';
+  const badgeLabel = { completed: '✓ Completo', beta: 'β Beta', demo: '▶ Demo', 'en progreso': '⚙ WIP' }[h.status] || h.status;
+  const platformLabel = h.base ? (h.base.match(/\(([^)]+)\)/)?.[1] || h.platform?.toUpperCase() || 'GBA') : 'GBA';
+  const coverContent = h.image
+    ? `<img src="${h.image}" class="hack-cover-img" alt="${h.title}" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.hack-cover-fallback').style.display='flex'">\
+<div class="hack-cover-fallback" style="display:none;font-size:56px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));width:100%;height:100%;align-items:center;justify-content:center;">${h.emoji || '🎮'}</div>`
+    : `<div style="font-size:56px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5))">${h.emoji || '🎮'}</div>`;
+
+  return `
+  <a class="hack-card" href="#" onclick="openDetail('${h.id}'); return false;">
+    <div class="hack-cover" style="background: ${h.gradient || 'linear-gradient(135deg, #1a237e, #283593)'}">
+      ${coverContent}
+      <div class="hack-badge ${badgeClass}">${badgeLabel}</div>
+      <div class="hack-base-tag">${platformLabel}</div>
+    </div>
+    <div class="hack-body">
+      <div class="type-tags">
+        ${(h.tags || []).slice(0,3).map(t => `<span class="type-tag t-normal">${t}</span>`).join('')}
+      </div>
+      <div class="hack-title">${h.title}</div>
+      <div class="hack-desc">${h.desc}</div>
+      <div class="hack-meta">
+        <div class="hack-author">
+          <div class="author-avatar" style="background:${h.authorColor || 'var(--blue)'};">${h.authorInitial || '?'}</div>
+          <span>${h.author || 'Anónimo'}</span>
+        </div>
+        <div class="hack-stats">
+          <div class="hack-stat">📥 ${formatNum(h.downloads || 0)}</div>
+          <div class="hack-stat">⭐ ${h.rating || '4.0'}</div>
+        </div>
+      </div>
+    </div>
+  </a>`;
+}
+
+// ===== DETAIL VIEW =====
+function openDetail(id) {
+  const hack = getAllHacks().find(h => h.id === id);
+  if (!hack) return;
+
+  previousPage = currentPage;
+
+  const content = document.getElementById('detail-content');
+  content.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-cover" style="background: ${hack.gradient || 'linear-gradient(135deg, #1a237e, #283593)'}">
+        ${hack.image
+          ? `<img src="${hack.image}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${hack.title}" onerror="this.style.display='none'">`
+          : ''}
+        <div style="font-size:90px; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6)); position:relative; z-index:1;">${hack.emoji || '🎮'}</div>
+        <div class="hack-badge ${hack.status === 'completed' ? 'completed' : hack.status}" style="top:16px;right:16px;font-size:12px;padding:5px 14px;position:absolute;z-index:2;">
+          ${hack.status === 'completed' ? '✓ Completo' : hack.status === 'beta' ? 'β Beta' : '▶ Demo'}
+        </div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-title">${hack.title}</div>
+        <div class="type-tags">${(hack.tags||[]).map(t => `<span class="type-tag t-normal">${t}</span>`).join('')}</div>
+        <div class="detail-meta-row">
+          <div class="detail-meta-item">
+            <div class="author-avatar" style="width:28px;height:28px;font-size:11px;background:${hack.authorColor||'var(--blue)'};">${hack.authorInitial||'?'}</div>
+            <span>${hack.author || 'Anónimo'}</span>
+          </div>
+          <div class="detail-meta-item">📥 ${formatNum(hack.downloads || 0)} descargas</div>
+          <div class="detail-meta-item">⭐ ${hack.rating || '4.0'} (${hack.reviews || 0} reseñas)</div>
+          <div class="detail-meta-item">💾 ROM: ${hack.base || 'Desconocida'}</div>
+        </div>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.7; margin-bottom:1.5rem; font-weight:600;">${hack.desc}</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="download-btn" href="${hack.downloadUrl || '#'}" target="_blank" rel="noopener noreferrer" onclick="downloadHack('${hack.id}')">📥 Descargar Hackrom</a>
+          ${hack.url ? `<a href="${hack.url}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size:13px;padding:10px 20px;">🔗 Enlace Externo</a>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:1.5rem; align-items:start;">
+      <div>
+        <div class="detail-section-title">📋 Características</div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+          ${(hack.features||['No hay información disponible']).map(f =>
+            `<li style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-muted);font-weight:600;">
+              <span style="color:var(--success);font-size:16px;">✓</span> ${f}
+            </li>`).join('')}
+        </ul>
+
+        <div class="detail-section-title" style="margin-top:2rem;">🖼️ Screenshots</div>
+        <div class="screenshot-grid">
+          ${(hack.screenshots||['🎮','🎮','🎮','🎮']).map(s =>
+            `<div class="screenshot">${s}</div>`).join('')}
+        </div>
+
+        <div class="detail-section-title" style="margin-top:2rem;">💬 Comentarios</div>
+        <div id="comments-${hack.id}">
+          <div class="comment">
+            <div class="comment-header">
+              <div class="author-avatar">PK</div>
+              <span class="comment-author">PokéMaster99</span>
+              <span class="comment-date" style="margin-left:auto;">hace 3 días</span>
+            </div>
+            <div class="comment-text">Increíble hackrom, llevo 20 horas y no puedo parar. La historia es épica 🔥</div>
+          </div>
+          <div class="comment">
+            <div class="comment-header">
+              <div class="author-avatar" style="background:var(--success)">TR</div>
+              <span class="comment-author">TrainerRed</span>
+              <span class="comment-date" style="margin-left:auto;">hace 1 semana</span>
+            </div>
+            <div class="comment-text">La dificultad está perfectamente balanceada. Muy recomendado para los fans de la saga.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <input type="text" class="form-control" id="new-comment" placeholder="Escribe un comentario...">
+          <button class="btn-primary" style="white-space:nowrap;padding:10px 18px;font-size:13px;" onclick="addComment('${hack.id}')">Enviar</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.25rem;">
+          <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--text-muted);margin-bottom:1rem;">TU VALORACIÓN</div>
+          <div class="stars" id="user-stars-${hack.id}" style="justify-content:center;font-size:28px;margin-bottom:1rem;">
+            ${[1,2,3,4,5].map(i => `<span class="star" onclick="rateHack('${hack.id}',${i})" onmouseover="hoverStars('${hack.id}',${i})" onmouseout="resetStars('${hack.id}')">★</span>`).join('')}
+          </div>
+          <div style="text-align:center;color:var(--text-muted);font-size:12px;font-weight:700;">Haz clic para valorar</div>
+        </div>
+
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.25rem;margin-top:12px;">
+          <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--text-muted);margin-bottom:1rem;">INFORMACIÓN</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${[
+              ['📅 Publicado', hack.date || '2024'],
+              ['💾 Plataforma', hack.platform?.toUpperCase() || 'GBA'],
+              ['⚙️ ROM base', hack.base || 'FireRed'],
+              ['📊 Estado', hack.status || 'Completo'],
+            ].map(([k,v]) => `
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;">
+                <span style="color:var(--text-muted)">${k}</span>
+                <span>${v}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.25rem;margin-top:12px;">
+          <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--text-muted);margin-bottom:1rem;">ESTADÍSTICAS</div>
+          <div style="text-align:center;">
+            <div style="font-family:'Press Start 2P',monospace;font-size:20px;color:var(--yellow);">${formatNum(hack.downloads||0)}</div>
+            <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-top:4px;">Total descargas</div>
+          </div>
+          <div style="margin-top:12px;">
+            ${[['⭐⭐⭐⭐⭐', 65], ['⭐⭐⭐⭐', 22], ['⭐⭐⭐', 8], ['⭐⭐', 3], ['⭐', 2]].map(([l, p]) => `
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span style="font-size:10px;width:60px;flex-shrink:0;">${l}</span>
+                <div style="flex:1;background:var(--surface);border-radius:4px;height:6px;overflow:hidden;">
+                  <div style="width:${p}%;height:100%;background:var(--yellow);border-radius:4px;"></div>
+                </div>
+                <span style="font-size:11px;color:var(--text-muted);font-weight:700;width:28px;">${p}%</span>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  showPage('detail');
+}
+
+// ===== FILTER & SEARCH =====
+function filterHacks(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function searchHacks(query) {
+  applyFilters(query);
+}
+
+function applyFilters(query = '') {
+  let filtered = getAllHacks();
+  if (currentFilter !== 'all') {
+    if (currentFilter === 'completed') filtered = filtered.filter(h => h.status === 'completed');
+    else if (currentFilter === 'beta') filtered = filtered.filter(h => h.status === 'beta');
+    else filtered = filtered.filter(h => h.platform === currentFilter);
+  }
+  if (query) {
+    const q = query.toLowerCase();
+    filtered = filtered.filter(h =>
+      h.title.toLowerCase().includes(q) ||
+      h.desc.toLowerCase().includes(q) ||
+      (h.author||'').toLowerCase().includes(q) ||
+      (h.tags||[]).some(t => t.toLowerCase().includes(q))
+    );
+  }
+
+  const grid1 = document.getElementById('hacks-grid');
+  const grid2 = document.getElementById('hacks-grid-explore');
+  if (grid1) renderHacks('hacks-grid', filtered.slice(0,6));
+  if (grid2) renderHacks('hacks-grid-explore', filtered);
+}
+
+// ===== AUTHORS =====
+function renderAuthors() {
+  const grid = document.getElementById('authors-grid');
+  if (!grid) return;
+  grid.innerHTML = AUTHORS.map(a => `
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--card-border)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:${a.textColor||'white'};flex-shrink:0;">${a.initial}</div>
+      <div>
+        <div style="font-weight:800;font-size:15px;">${a.name}</div>
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;">${a.hacks} hacks · ${formatNum(a.downloads)} DL</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== RANKING =====
+function renderRanking() {
+  const list = document.getElementById('ranking-list');
+  if (!list) return;
+  const sorted = [...getAllHacks()].sort((a,b) => (b.downloads||0) - (a.downloads||0));
+  list.innerHTML = sorted.map((h, i) => `
+    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:all 0.2s;"
+      onclick="openDetail('${h.id}')"
+      onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--card-border)'">
+      <div style="font-family:'Press Start 2P',monospace;font-size:${i<3?'20':'14'}px;color:${i===0?'#FFD700':i===1?'#C0C0C0':i===2?'#CD7F32':'var(--text-muted)'};width:40px;text-align:center;flex-shrink:0;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div style="font-size:32px;flex-shrink:0;">${h.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text);margin-bottom:4px;">${h.title}</div>
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;">${h.author} · ${h.base}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--yellow);">${formatNum(h.downloads||0)}</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:700;">descargas</div>
+        <div style="font-size:12px;color:var(--text);margin-top:4px;">⭐ ${h.rating||'4.0'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== UPLOAD =====
+function openUpload() {
+  document.getElementById('upload-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeUpload() {
+  document.getElementById('upload-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeUploadOutside(e) {
+  if (e.target === document.getElementById('upload-modal')) closeUpload();
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+  document.getElementById('drop-zone').classList.remove('dragover');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) setFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) setFile(file);
+}
+
+function setFile(file) {
+  selectedFile = file;
+  document.getElementById('file-name-display').textContent = file.name + ' (' + formatBytes(file.size) + ')';
+  document.getElementById('file-selected').classList.add('show');
+}
+
+function handleImgSelect(e) {
+  selectedImg = e.target.files[0];
+}
+
+function toggleType(el) {
+  el.classList.toggle('selected');
+}
+
+function submitHack() {
+  const name = document.getElementById('f-name').value.trim();
+  const base = document.getElementById('f-base').value;
+  const status = document.getElementById('f-status').value;
+  const desc = document.getElementById('f-desc').value.trim();
+
+  if (!name || !base || !status || !desc) {
+    showToast('❌ Rellena todos los campos obligatorios', 'error'); return;
+  }
+  if (!selectedFile) {
+    showToast('❌ Selecciona el archivo del hackrom', 'error'); return;
+  }
+
+  const tags = [...document.querySelectorAll('#type-select .selected')].map(e => e.textContent);
+  const platforms = { 'GBA': 'gba', 'NDS': 'nds', 'GBC': 'gbc', 'GB': 'gbc' };
+  const platKey = Object.keys(platforms).find(k => base.includes(k)) || 'gba';
+  const emojis = ['🎮','⚡','🌟','🔥','💥','💎','🌀','👾','🏆','✨'];
+  const gradients = [
+    'linear-gradient(135deg, #1a237e, #283593)',
+    'linear-gradient(135deg, #7f0000, #c62828)',
+    'linear-gradient(135deg, #1b5e20, #2e7d32)',
+    'linear-gradient(135deg, #4a148c, #6a1b9a)',
+    'linear-gradient(135deg, #e65100, #f57c00)',
+  ];
+
+  // Simulated upload progress
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressBar = document.getElementById('progress-bar');
+  const progressLabel = document.getElementById('progress-label');
+  progressWrap.classList.add('show');
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 12 + 3;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      // Save hack
+      const newHack = {
+        id: 'user-' + Date.now(),
+        title: name,
+        desc: desc,
+        base: base,
+        platform: platforms[platKey],
+        status: status,
+        author: 'Tú',
+        authorInitial: name.substring(0,2).toUpperCase(),
+        authorColor: '#E3350D',
+        downloads: 0,
+        rating: 0,
+        reviews: 0,
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        gradient: gradients[Math.floor(Math.random() * gradients.length)],
+        tags: tags.length ? tags : ['Nuevo'],
+        date: new Date().toISOString().split('T')[0],
+        features: ['Subido por la comunidad'],
+        screenshots: ['🎮', '🎮', '🎮', '🎮'],
+        url: document.getElementById('f-url').value || null,
+      };
+
+      userHacks.unshift(newHack);
+      localStorage.setItem('phh_hacks', JSON.stringify(userHacks));
+
+      setTimeout(() => {
+        progressWrap.classList.remove('show');
+        closeUpload();
+        resetForm();
+        showToast('🎉 ¡Hackrom publicado con éxito!', 'success');
+        renderHacks('hacks-grid', getAllHacks().slice(0, 6));
+        renderHacks('hacks-grid-explore', getAllHacks());
+        renderRanking();
+        updateStats();
+      }, 500);
+    }
+    progressBar.style.width = Math.round(progress) + '%';
+    progressLabel.textContent = 'Subiendo... ' + Math.round(progress) + '%';
+  }, 100);
+}
+
+function resetForm() {
+  ['f-name','f-desc','f-url'].forEach(id => document.getElementById(id).value = '');
+  ['f-base','f-status'].forEach(id => document.getElementById(id).selectedIndex = 0);
+  document.querySelectorAll('#type-select .selected').forEach(e => e.classList.remove('selected'));
+  document.getElementById('file-selected').classList.remove('show');
+  document.getElementById('progress-bar').style.width = '0';
+  selectedFile = null;
+  selectedImg = null;
+}
+
+// ===== DOWNLOAD =====
+function downloadHack(id) {
+  const hack = getAllHacks().find(h => h.id === id);
+  if (!hack) return;
+  hack.downloads = (hack.downloads || 0) + 1;
+  showToast('📥 Descarga iniciada: ' + hack.title, 'success');
+}
+
+// ===== RATING =====
+function rateHack(id, stars) {
+  const starsEl = document.getElementById('user-stars-' + id);
+  if (!starsEl) return;
+  [...starsEl.children].forEach((s, i) => {
+    s.classList.toggle('filled', i < stars);
+  });
+  showToast('⭐ ¡Gracias por tu valoración de ' + stars + ' estrellas!', 'success');
+}
+
+function hoverStars(id, n) {
+  const starsEl = document.getElementById('user-stars-' + id);
+  if (!starsEl) return;
+  [...starsEl.children].forEach((s, i) => s.classList.toggle('filled', i < n));
+}
+
+function resetStars(id) {
+  const starsEl = document.getElementById('user-stars-' + id);
+  if (!starsEl) return;
+  [...starsEl.children].forEach(s => s.classList.remove('filled'));
+}
+
+// ===== COMMENTS =====
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function addComment(id) {
+  const input = document.getElementById('new-comment');
+  if (!input || !input.value.trim()) return;
+  const container = document.getElementById('comments-' + id);
+  const div = document.createElement('div');
+  div.className = 'comment';
+  div.innerHTML = `
+    <div class="comment-header">
+      <div class="author-avatar" style="background:var(--red)">TÚ</div>
+      <span class="comment-author">Tú</span>
+      <span class="comment-date" style="margin-left:auto;">ahora mismo</span>
+    </div>
+    <div class="comment-text">${escapeHTML(input.value.trim())}</div>`;
+  container.appendChild(div);
+  input.value = '';
+  showToast('💬 Comentario publicado', 'success');
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// ===== UTILS =====
+function formatNum(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+</script>
+</body>
+</html>
